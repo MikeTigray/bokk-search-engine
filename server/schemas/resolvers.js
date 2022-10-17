@@ -1,7 +1,6 @@
 const { User } = require("../models");
 const { AuthenticationError } = require("apollo-server-express");
 const { signToken } = require("../utils/auth");
-const { findOneAndUpdate } = require("../models/User");
 
 const resolvers = {
   Query: {
@@ -28,8 +27,8 @@ const resolvers = {
         throw new AuthenticationError("No user with this email was found!");
       }
       //   User schema has a isCorrectPassword method
-      const password = await user.isCorrectPassword(password);
-      if (!password) {
+      const currentPassword = await user.isCorrectPassword(password);
+      if (!currentPassword) {
         throw new AuthenticationError("Incorrect credentials");
       }
       const token = signToken(user);
