@@ -4,11 +4,13 @@ const { signToken } = require("../utils/auth");
 
 const resolvers = {
   Query: {
-    me: async (parent, {}, context) => {
+    me: async (parent, args, context) => {
       if (context.user) {
-        const userData = await User.findOne({ _id: context.user.id }).select(
-          "-__v -password"
-        );
+        const userData = await User.findOne({ _id: context.user.id });
+        // .select(
+        //   "-__v -password"
+        // );
+        return userData;
       } else {
         throw new AuthenticationError("Please log in!");
       }
@@ -27,8 +29,8 @@ const resolvers = {
         throw new AuthenticationError("No user with this email was found!");
       }
       //   User schema has a isCorrectPassword method
-      const currentPassword = await user.isCorrectPassword(password);
-      if (!currentPassword) {
+      const correctPassword = await user.isCorrectPassword(password);
+      if (!correctPassword) {
         throw new AuthenticationError("Incorrect credentials");
       }
       const token = signToken(user);
@@ -53,7 +55,7 @@ const resolvers = {
             _id: context.user._id,
           },
           {
-            $pull: { savedBooks: bookId },
+            $pull: { savedBooks: { bookId } },
           },
           { new: true }
         );
