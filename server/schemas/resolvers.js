@@ -7,10 +7,9 @@ const resolvers = {
   Query: {
     me: async (parent, args, context) => {
       if (context.user) {
-        const userData = await User.findOne({ _id: context.user.id });
-        // .select(
-        //   "-__v -password"
-        // );
+        const userData = await User.findOne({ _id: context.user.id }).select(
+          "-__v -password"
+        );
         return userData;
       } else {
         throw new AuthenticationError("Please log in!");
@@ -40,12 +39,12 @@ const resolvers = {
     },
     saveBook: async (parent, { book }, context) => {
       if (context.user) {
-        const User = await findOneAndUpdate(
+        const user = await User.findOneAndUpdate(
           { _id: context.user._id },
           { $addToSet: { savedBooks: book } },
           { new: true }
         );
-        return User;
+        return user;
       }
       throw new AuthenticationError("You need to be logged in!");
     },
