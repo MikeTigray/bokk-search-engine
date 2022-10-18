@@ -56,7 +56,7 @@ const resolvers = {
             _id: context.user._id,
           },
           {
-            $pull: { savedBooks: { bookId } },
+            $pull: { savedBooks: { bookId: bookId } },
           },
           { new: true }
         );
